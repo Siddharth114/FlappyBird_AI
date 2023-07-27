@@ -102,10 +102,7 @@ def mainGame():
         for upper_pipe, lower_pipe in zip(upper_pipes, lower_pipes):
             pygame.draw.rect(SCREEN, (255,255,255), pygame.Rect(upper_pipe['x'], upper_pipe['y'], PIPE_WIDTH, PIPE_HEIGHT))
             pygame.draw.rect(SCREEN, (255,255,255), pygame.Rect(lower_pipe['x'], lower_pipe['y'], PIPE_WIDTH, PIPE_HEIGHT))
-            # SCREEN.blit(GAME_SPRITES['pipe'][0], (upper_pipe['x'], upper_pipe['y']))
-            # SCREEN.blit(GAME_SPRITES['pipe'][1], (lower_pipe['x'], lower_pipe['y']))
         pygame.draw.circle(SCREEN, (255, 255, 255), (player_x, player_y), 10)
-        # SCREEN.blit(GAME_SPRITES['player'], (player_x, player_y))
         score_text = my_font.render(str(score), False, (255, 255, 255))
         SCREEN.blit(score_text, (SCREEN_WIDTH/2, 20))
 
