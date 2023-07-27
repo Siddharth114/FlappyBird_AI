@@ -39,11 +39,11 @@ def mainGame():
 
     upper_pipes = [
         {"x": SCREEN_WIDTH + 200, "y": new_pipe_1[0]["y"]},
-        {"x": SCREEN_WIDTH + 200 + (SCREEN_WIDTH / 2), "y": new_pipe_2[0]["y"]},
+        {"x": SCREEN_WIDTH + 200 + int(SCREEN_WIDTH * 0.5), "y": new_pipe_2[0]["y"]},
     ]
     lower_pipes = [
         {"x": SCREEN_WIDTH + 200, "y": new_pipe_1[1]["y"]},
-        {"x": SCREEN_WIDTH + 200 + (SCREEN_WIDTH / 2), "y": new_pipe_2[1]["y"]},
+        {"x": SCREEN_WIDTH + 200 + int(SCREEN_WIDTH * 0.5), "y": new_pipe_2[1]["y"]},
     ]
 
     pipe_velocity_x = -4
@@ -69,7 +69,7 @@ def mainGame():
         if crash_test:
             return
 
-        player_mid_pos = player_x + 5    #GAME_SPRITES["player"].get_width() / 2
+        player_mid_pos = player_x + 5
         for pipe in upper_pipes:
             pipe_mid_pos = pipe['x'] + PIPE_WIDTH/2
             if pipe_mid_pos<=player_mid_pos<pipe_mid_pos+4:
@@ -81,7 +81,7 @@ def mainGame():
         if player_flapped:
             player_flapped=False
 
-        player_height = 5   #GAME_SPRITES['player'].get_height()
+        player_height = 5
 
         player_y += min(player_velocity_y, GROUND_Y - player_y - player_height)
 
@@ -111,6 +111,17 @@ def mainGame():
 
 
 def isCollide(player_x, player_y, upper_pipes, lower_pipes):
+    if player_y > GROUND_Y - 10 or player_y < 0:
+        return True
+    
+    for pipe in upper_pipes:
+        if player_y<(PIPE_HEIGHT + pipe['y']) and abs(player_x-pipe['x'])<PIPE_WIDTH:
+            return True
+        
+    for pipe in lower_pipes:
+        if player_y+10 > pipe['y'] and abs(player_x-pipe['x'])<PIPE_WIDTH:
+            return True
+        
     return False
 
 
