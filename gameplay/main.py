@@ -164,7 +164,7 @@ def deadScreen(score):
     text_y = (SCREEN_HEIGHT - text_height) // 2
 
     text_surface = my_font.render(text, True, (255, 0, 0))
-    SCREEN.blit(text_surface, (text_x + 20, text_y+20))
+    SCREEN.blit(text_surface, (text_x, text_y))
     pygame.display.update()
 
 
