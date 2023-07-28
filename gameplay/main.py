@@ -43,14 +43,14 @@ def mainGame():
 
     upper_pipes = [
         {"x": SCREEN_WIDTH + 200, "y": new_pipe_1[0]["y"]},
-        {"x": SCREEN_WIDTH + 200 + int(SCREEN_WIDTH * 0.5), "y": new_pipe_2[0]["y"]},
+        {"x": SCREEN_WIDTH + 200 + int(SCREEN_WIDTH * .5), "y": new_pipe_2[0]["y"]},
     ]
     lower_pipes = [
         {"x": SCREEN_WIDTH + 200, "y": new_pipe_1[1]["y"]},
-        {"x": SCREEN_WIDTH + 200 + int(SCREEN_WIDTH * 0.5), "y": new_pipe_2[1]["y"]},
+        {"x": SCREEN_WIDTH + 200 + int(SCREEN_WIDTH * .5), "y": new_pipe_2[1]["y"]},
     ]
 
-    pipe_velocity_x = -4
+    pipe_velocity_x = -5
 
     player_velocity_y = -9
     player_max_velocity_y = 10
@@ -73,7 +73,7 @@ def mainGame():
         if crash_test:
             return
 
-        player_mid_pos = player_x + 5
+        player_mid_pos = player_x + PLAYER_RADIUS // 2
         for pipe in upper_pipes:
             pipe_mid_pos = pipe["x"] + PIPE_WIDTH / 2
             if pipe_mid_pos <= player_mid_pos < pipe_mid_pos + 4:
@@ -127,8 +127,8 @@ def isCollide(player_x, player_y, upper_pipes, lower_pipes):
         return True
 
     for pipe in upper_pipes:
-        closest_x = max(pipe['x'], min(player_x, pipe['x'] + PIPE_WIDTH))
-        closest_y = max(pipe['y'], min(player_y, pipe['y'] + PIPE_HEIGHT))
+        closest_x = max(pipe["x"], min(player_x, pipe["x"] + PIPE_WIDTH))
+        closest_y = max(pipe["y"], min(player_y, pipe["y"] + PIPE_HEIGHT))
 
         distance = math.sqrt((player_x - closest_x) ** 2 + (player_y - closest_y) ** 2)
 
@@ -136,9 +136,8 @@ def isCollide(player_x, player_y, upper_pipes, lower_pipes):
             return True
 
     for pipe in lower_pipes:
-
-        closest_x = max(pipe['x'], min(player_x, pipe['x'] + PIPE_WIDTH))
-        closest_y = max(pipe['y'], min(player_y, pipe['y'] + PIPE_HEIGHT))
+        closest_x = max(pipe["x"], min(player_x, pipe["x"] + PIPE_WIDTH))
+        closest_y = max(pipe["y"], min(player_y, pipe["y"] + PIPE_HEIGHT))
 
         distance = math.sqrt((player_x - closest_x) ** 2 + (player_y - closest_y) ** 2)
 
