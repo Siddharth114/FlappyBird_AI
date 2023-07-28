@@ -43,11 +43,11 @@ def mainGame():
 
     upper_pipes = [
         {"x": SCREEN_WIDTH + 200, "y": new_pipe_1[0]["y"]},
-        {"x": SCREEN_WIDTH + 200 + int(SCREEN_WIDTH * .5), "y": new_pipe_2[0]["y"]},
+        {"x": SCREEN_WIDTH + 200 + int(SCREEN_WIDTH * 0.5), "y": new_pipe_2[0]["y"]},
     ]
     lower_pipes = [
         {"x": SCREEN_WIDTH + 200, "y": new_pipe_1[1]["y"]},
-        {"x": SCREEN_WIDTH + 200 + int(SCREEN_WIDTH * .5), "y": new_pipe_2[1]["y"]},
+        {"x": SCREEN_WIDTH + 200 + int(SCREEN_WIDTH * 0.5), "y": new_pipe_2[1]["y"]},
     ]
 
     pipe_velocity_x = -5
@@ -71,7 +71,7 @@ def mainGame():
 
         crash_test = isCollide(player_x, player_y, upper_pipes, lower_pipes)
         if crash_test:
-            return
+            return score
 
         player_mid_pos = player_x + PLAYER_RADIUS // 2
         for pipe in upper_pipes:
@@ -154,6 +154,19 @@ def getRandomPipe():
     upper_pipe_y = lower_pipe_y - gap - PIPE_HEIGHT
     return [{"x": pipe_x, "y": upper_pipe_y}, {"x": pipe_x, "y": lower_pipe_y}]
 
+def deadScreen(score):
+    SCREEN.fill([0,0,0])
+    text = f"Your Score is {score}"
+
+    text_width, text_height = my_font.size(text)
+
+    text_x = (SCREEN_WIDTH - text_width) // 2
+    text_y = (SCREEN_HEIGHT - text_height) // 2
+
+    text_surface = my_font.render(text, True, (255, 0, 0))
+    SCREEN.blit(text_surface, (text_x + 20, text_y+20))
+    pygame.display.update()
+
 
 if __name__ == "__main__":
     pygame.init()
@@ -164,4 +177,5 @@ if __name__ == "__main__":
 
     while True:
         startScreen()
-        mainGame()
+        score = mainGame()
+        deadScreen(score)
