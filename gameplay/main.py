@@ -115,7 +115,7 @@ def mainGame():
                 pygame.Rect(lower_pipe["x"], lower_pipe["y"], PIPE_WIDTH, PIPE_HEIGHT),
             )
         pygame.draw.circle(SCREEN, (255, 255, 255), (player_x, player_y), 10)
-        score_text = my_font.render(str(score), False, (255, 255, 255))
+        score_text = my_font.render(str(score), False, (0, 255, 0))
         SCREEN.blit(score_text, (SCREEN_WIDTH / 2, 20))
 
         pygame.display.update()
@@ -127,10 +127,6 @@ def isCollide(player_x, player_y, upper_pipes, lower_pipes):
         return True
 
     for pipe in upper_pipes:
-        bottom_y = pipe['y'] + PIPE_HEIGHT
-        left_x = pipe['x']
-        right_x = left_x + PIPE_WIDTH
-
         closest_x = max(pipe['x'], min(player_x, pipe['x'] + PIPE_WIDTH))
         closest_y = max(pipe['y'], min(player_y, pipe['y'] + PIPE_HEIGHT))
 
@@ -140,9 +136,6 @@ def isCollide(player_x, player_y, upper_pipes, lower_pipes):
             return True
 
     for pipe in lower_pipes:
-        bottom_y = pipe['y'] + PIPE_HEIGHT
-        left_x = pipe['x']
-        right_x = left_x + PIPE_WIDTH
 
         closest_x = max(pipe['x'], min(player_x, pipe['x'] + PIPE_WIDTH))
         closest_y = max(pipe['y'], min(player_y, pipe['y'] + PIPE_HEIGHT))
@@ -166,7 +159,7 @@ def getRandomPipe():
 if __name__ == "__main__":
     pygame.init()
     pygame.font.init()
-    my_font = pygame.font.SysFont("Comic Sans MS", 30)
+    my_font = pygame.font.SysFont("Arial", 30)
     FPSCLOCK = pygame.time.Clock()
     pygame.display.set_caption("Flappy Bird Clone")
 
