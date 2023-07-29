@@ -9,7 +9,7 @@ pygame.font.init()
 font = pygame.font.SysFont("Arial", 30)
 
 FPS = 32
-SCREEN_WIDTH = 336
+SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 600
 PIPE_WIDTH = 20
 PIPE_HEIGHT = 500
@@ -77,11 +77,11 @@ class FlappyBird:
         self.lower_pipes = [{"x": self.w + 200, "y": self.new_pipe_1[1]["y"]}]
 
         self.upper_pipes.append(
-            {"x": self.upper_pipes[-1]["x"] + 100, "y": self.new_pipe_2[0]["y"]}
+            {"x": self.upper_pipes[-1]["x"] + 200, "y": self.new_pipe_2[0]["y"]}
         )
 
         self.lower_pipes.append(
-            {"x": self.lower_pipes[-1]["x"] + 100, "y": self.new_pipe_2[1]["y"]}
+            {"x": self.lower_pipes[-1]["x"] + 200, "y": self.new_pipe_2[1]["y"]}
         )
 
         while True:
@@ -127,7 +127,7 @@ class FlappyBird:
                 upper_pipe["x"] += self.pipe_velocity_x
                 lower_pipe["x"] += self.pipe_velocity_x
 
-            if 0 < self.upper_pipes[0]["x"] < 5:
+            if 0 < self.upper_pipes[0]["x"] < self.w//8:
                 new_pipe = self.get_pipe(upper_pipes=self.upper_pipes)
                 self.upper_pipes.append(new_pipe[0])
                 self.lower_pipes.append(new_pipe[1])
@@ -175,7 +175,7 @@ class FlappyBird:
         if upper_pipes == None:
             pipe_x = self.w + 10
         else:
-            pipe_x = upper_pipes[-1]["x"] + 100
+            pipe_x = upper_pipes[-1]["x"] + 200
         lower_pipe_y = random.randrange(gap + 50, self.h - 50)
         upper_pipe_y = lower_pipe_y - gap - self.pipe_h
         return [{"x": pipe_x, "y": upper_pipe_y}, {"x": pipe_x, "y": lower_pipe_y}]
