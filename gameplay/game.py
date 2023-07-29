@@ -214,6 +214,8 @@ class FlappyBird:
                 ):
                     pygame.quit()
                     sys.exit()
+                elif event.type == KEYDOWN and event.key == K_SPACE:
+                    self.reset()
 
             self.display.fill(BLACK_COLOR)
             text = f"Your Score is {self.score}"
