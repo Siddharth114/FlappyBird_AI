@@ -5,6 +5,7 @@ import sys
 import math
 
 pygame.init()
+pygame.font.init()
 font = pygame.font.SysFont("Arial", 30)
 
 FPS = 32
@@ -65,30 +66,23 @@ class FlappyBird:
         self.pipe_velocity_x = -5
         self.player_velocity_y = -9
         self.player_max_velocity_y = 10
-        self.player_min_velocity_y = 8
         self.player_accelaration_y = 1
         self.player_flap_velocity = -8
         self.player_flapped = False
 
         self.game_over = False
 
-        self.upper_pipes = [
-            {'x': self.w + 200, 'y':self.new_pipe_1[0]['y']}
-        ]
+        self.upper_pipes = [{"x": self.w + 200, "y": self.new_pipe_1[0]["y"]}]
 
-        self.lower_pipes = [
-            {'x':self.w + 200, 'y':self.new_pipe_1[1]['y']}
-        ]
+        self.lower_pipes = [{"x": self.w + 200, "y": self.new_pipe_1[1]["y"]}]
 
         self.upper_pipes.append(
-            {'x':self.upper_pipes[-1]['x']+100, 'y':self.new_pipe_2[0]['y']}
+            {"x": self.upper_pipes[-1]["x"] + 100, "y": self.new_pipe_2[0]["y"]}
         )
 
         self.lower_pipes.append(
-            {'x':self.lower_pipes[-1]['x']+100, 'y':self.new_pipe_2[1]['y']}
+            {"x": self.lower_pipes[-1]["x"] + 100, "y": self.new_pipe_2[1]["y"]}
         )
-
-
 
         while True:
             for event in pygame.event.get():
@@ -97,112 +91,120 @@ class FlappyBird:
                 ):
                     pygame.quit()
                     sys.exit()
-                if event.type == KEYDOWN and event.key==K_SPACE:
+                if event.type == KEYDOWN and event.key == K_SPACE:
                     if self.player_y > 0:
                         self.player_velocity_y = self.player_flap_velocity
                         self.player_flapped = True
 
-            self.game_over = self.collision(self.player_x, self.player_y, self.upper_pipes, self.lower_pipes)
+            self.game_over = self.collision(
+                self.player_x, self.player_y, self.upper_pipes, self.lower_pipes
+            )
             if self.game_over:
                 self.death_screen()
 
-            player_mid_pos = self.player_x + self.player_r //2
+            player_mid_pos = self.player_x + self.player_r // 2
             for pipe in self.upper_pipes:
                 pipe_mid_pos = pipe["x"] + self.pipe_w / 2
                 if pipe_mid_pos <= player_mid_pos < pipe_mid_pos + 4:
-                    self.score+=1
+                    self.score += 1
 
-            if self.player_velocity_y < self.player_max_velocity_y and not self.player_flapped:
+            if (
+                self.player_velocity_y < self.player_max_velocity_y
+                and not self.player_flapped
+            ):
                 self.player_velocity_y += self.player_accelaration_y
 
             if self.player_flapped:
-                self.player_flapped=False
+                self.player_flapped = False
 
             self.player_height = 5
 
-            self.player_y += min(self.player_velocity_y, self.h-self.player_y-self.player_height)
+            self.player_y += min(
+                self.player_velocity_y, self.h - self.player_y - self.player_height
+            )
 
             for upper_pipe, lower_pipe in zip(self.upper_pipes, self.lower_pipes):
-                upper_pipe['x'] += self.pipe_velocity_x
-                lower_pipe['x'] += self.pipe_velocity_x
+                upper_pipe["x"] += self.pipe_velocity_x
+                lower_pipe["x"] += self.pipe_velocity_x
 
-
-            if 0 < self.upper_pipes[0]['x'] < 5:
+            if 0 < self.upper_pipes[0]["x"] < 5:
                 new_pipe = self.get_pipe(upper_pipes=self.upper_pipes)
                 self.upper_pipes.append(new_pipe[0])
                 self.lower_pipes.append(new_pipe[1])
 
-            if self.upper_pipes[0]['x'] < -self.pipe_w:
+            if self.upper_pipes[0]["x"] < -self.pipe_w:
                 self.upper_pipes.pop(0)
-                self.lower_pipes.pop(1)
+                self.lower_pipes.pop(0)
 
             self.display.fill(BLACK_COLOR)
             for upper_pipe, lower_pipe in zip(self.upper_pipes, self.lower_pipes):
                 pygame.draw.rect(
                     self.display,
                     WHITE_COLOR,
-                    pygame.Rect(upper_pipe["x"], upper_pipe["y"], self.pipe_w, self.pipe_h)
+                    pygame.Rect(
+                        upper_pipe["x"], upper_pipe["y"], self.pipe_w, self.pipe_h
+                    ),
                 )
 
                 pygame.draw.rect(
                     self.display,
                     WHITE_COLOR,
-                    pygame.Rect(lower_pipe["x"], lower_pipe["y"], self.pipe_w, self.pipe_h)
+                    pygame.Rect(
+                        lower_pipe["x"], lower_pipe["y"], self.pipe_w, self.pipe_h
+                    ),
                 )
 
-                pygame.draw.circle(self.display, WHITE_COLOR, (self.player_x, self.player_y), self.player_r)
+            pygame.draw.circle(
+                self.display,
+                WHITE_COLOR,
+                (self.player_x, self.player_y),
+                self.player_r,
+            )
 
-                score_text = str(self.score)
-                text_width, text_height = font.size(str(score_text))
+            score_text = str(self.score)
+            text_width, text_height = font.size(str(score_text))
 
-                text_x = (self.w - text_width) //2
-                text_surface = font.render(score_text, True, GREEN_COLOR)
-                self.display.blit(text_surface, (text_x, 20))
-                pygame.display.update()
-                self.clock.tick(FPS)
-
-
-
-
-            
-
-
+            text_x = (self.w - text_width) // 2
+            text_surface = font.render(score_text, True, GREEN_COLOR)
+            self.display.blit(text_surface, (text_x, 20))
+            pygame.display.update()
+            self.clock.tick(FPS)
 
     def get_pipe(self, upper_pipes=None):
         gap = 150
         if upper_pipes == None:
             pipe_x = self.w + 10
         else:
-            pipe_x = upper_pipes[-1]['x']+100
-        lower_pipe_y = random.randrange(gap+50, self.h - 50)
+            pipe_x = upper_pipes[-1]["x"] + 100
+        lower_pipe_y = random.randrange(gap + 50, self.h - 50)
         upper_pipe_y = lower_pipe_y - gap - self.pipe_h
-        return [
-            {'x':pipe_x, 'y':upper_pipe_y},
-            {'x':pipe_x, 'y':lower_pipe_y}
-        ]
-    
+        return [{"x": pipe_x, "y": upper_pipe_y}, {"x": pipe_x, "y": lower_pipe_y}]
+
     def collision(self, player_x, player_y, upper_pipes, lower_pipes):
         if player_y >= self.h - self.player_r or player_y - self.player_r <= 0:
             return True
-        
+
         for pipe in upper_pipes:
-            closest_x = max(pipe['x'], min(player_x, pipe['x'] + self.pipe_w))
-            closest_y = max(pipe['y'], min(player_y, pipe['y']+self.pipe_h))
+            closest_x = max(pipe["x"], min(player_x, pipe["x"] + self.pipe_w))
+            closest_y = max(pipe["y"], min(player_y, pipe["y"] + self.pipe_h))
 
-            distance = math.sqrt((player_x-closest_x)**2 + (player_y-closest_y)**2)
+            distance = math.sqrt(
+                (player_x - closest_x) ** 2 + (player_y - closest_y) ** 2
+            )
 
-            if distance<=self.player_r:
+            if distance <= self.player_r:
                 return True
-            
+
         for pipe in lower_pipes:
-            closest_x = max(pipe['x'], min(player_x, pipe['x'] + self.pipe_w))
-            closest_y = max(pipe['y'], min(player_y, pipe['y']+self.pipe_h))
+            closest_x = max(pipe["x"], min(player_x, pipe["x"] + self.pipe_w))
+            closest_y = max(pipe["y"], min(player_y, pipe["y"] + self.pipe_h))
 
-            distance = math.sqrt((player_x-closest_x)**2 + (player_y-closest_y)**2)
+            distance = math.sqrt(
+                (player_x - closest_x) ** 2 + (player_y - closest_y) ** 2
+            )
 
-            if distance<=self.player_r:
+            if distance <= self.player_r:
                 return True
-            
 
     def death_screen(self):
         while True:
@@ -212,7 +214,7 @@ class FlappyBird:
                 ):
                     pygame.quit()
                     sys.exit()
-                    
+
             self.display.fill(BLACK_COLOR)
             text = f"Your Score is {self.score}"
 
