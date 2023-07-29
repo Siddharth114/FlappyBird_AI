@@ -19,6 +19,9 @@ RED_COLOR = [255, 0, 0]
 GREEN_COLOR = [0, 255, 0]
 WHITE_COLOR = [255, 255, 255]
 
+DEATH_REWARD = -10
+PIPE_PASSING_REWARD = 10
+
 
 class FlappyBird:
     def __init__(self):
@@ -54,6 +57,9 @@ class FlappyBird:
                     )
                     pygame.display.update()
                     self.clock.tick(FPS)
+
+    def play_step(self, event):
+        return event.type == KEYDOWN and event.key == K_SPACE
 
     def main_game(self):
         self.score = 0
@@ -91,15 +97,18 @@ class FlappyBird:
                 ):
                     pygame.quit()
                     sys.exit()
-                if event.type == KEYDOWN and event.key == K_SPACE:
+                self.is_space = self.play_step(event)
+                if self.is_space:
                     if self.player_y > 0:
                         self.player_velocity_y = self.player_flap_velocity
                         self.player_flapped = True
 
+            self.reward = 0
             self.game_over = self.collision(
                 self.player_x, self.player_y, self.upper_pipes, self.lower_pipes
             )
             if self.game_over:
+                self.reward += DEATH_REWARD
                 self.death_screen()
 
             player_mid_pos = self.player_x + self.player_r // 2
@@ -107,6 +116,7 @@ class FlappyBird:
                 pipe_mid_pos = pipe["x"] + self.pipe_w / 2
                 if pipe_mid_pos <= player_mid_pos < pipe_mid_pos + 4:
                     self.score += 1
+                    self.reward += PIPE_PASSING_REWARD
 
             if (
                 self.player_velocity_y < self.player_max_velocity_y
