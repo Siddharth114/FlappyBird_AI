@@ -4,6 +4,7 @@ import numpy as np
 from game import *
 from collections import deque
 from model import Linear_QNet, QTrainer
+from helper import plot
 
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
@@ -66,7 +67,7 @@ class Agent:
 
 def train():
     plot_scores = []
-    mean_scores = []
+    plot_mean_scores = []
     total_scores = 0
     record = 0
     agent = Agent()
@@ -98,6 +99,11 @@ def train():
 
             print('Game=', agent.n_games, 'Score=', score, 'Record=', record)
 
+            plot_scores.append(score)
+            total_scores += score
+            mean_scores = total_scores/agent.n_games
+            plot_mean_scores.append(mean_scores)
+            plot(plot_scores, plot_mean_scores)
 
 
 if __name__ == '__main__':
