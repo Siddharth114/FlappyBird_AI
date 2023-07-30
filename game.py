@@ -27,7 +27,9 @@ class FlappyBird:
         self.player_radius = PLAYER_RADIUS
         self.pipe_height = PIPE_HEIGHT
         self.pipe_width = PIPE_WIDTH
-        self.display = pygame.display.set_mode((self.display_width, self.display_height))
+        self.display = pygame.display.set_mode(
+            (self.display_width, self.display_height)
+        )
         pygame.display.set_caption("Flappy Bird Clone")
         self.clock = pygame.time.Clock()
         self.reset()
@@ -75,9 +77,13 @@ class FlappyBird:
 
         self.game_over = False
 
-        self.upper_pipes = [{"x": self.display_width + 200, "y": self.new_pipe_1[0]["y"]}]
+        self.upper_pipes = [
+            {"x": self.display_width + 200, "y": self.new_pipe_1[0]["y"]}
+        ]
 
-        self.lower_pipes = [{"x": self.display_width + 200, "y": self.new_pipe_1[1]["y"]}]
+        self.lower_pipes = [
+            {"x": self.display_width + 200, "y": self.new_pipe_1[1]["y"]}
+        ]
 
         self.upper_pipes.append(
             {"x": self.upper_pipes[-1]["x"] + 200, "y": self.new_pipe_2[0]["y"]}
@@ -124,14 +130,15 @@ class FlappyBird:
             self.player_height = 5
 
             self.player_y += min(
-                self.player_velocity_y, self.display_height - self.player_y - self.player_height
+                self.player_velocity_y,
+                self.display_height - self.player_y - self.player_height,
             )
 
             for upper_pipe, lower_pipe in zip(self.upper_pipes, self.lower_pipes):
                 upper_pipe["x"] += self.pipe_velocity_x
                 lower_pipe["x"] += self.pipe_velocity_x
 
-            if 0 < self.upper_pipes[0]["x"] < self.display_width//8:
+            if self.upper_pipes[0]["x"] == self.display_width // 8:
                 new_pipe = self.get_pipe(upper_pipes=self.upper_pipes)
                 self.upper_pipes.append(new_pipe[0])
                 self.lower_pipes.append(new_pipe[1])
@@ -146,7 +153,10 @@ class FlappyBird:
                     self.display,
                     WHITE_COLOR,
                     pygame.Rect(
-                        upper_pipe["x"], upper_pipe["y"], self.pipe_width, self.pipe_height
+                        upper_pipe["x"],
+                        upper_pipe["y"],
+                        self.pipe_width,
+                        self.pipe_height,
                     ),
                 )
 
@@ -154,7 +164,10 @@ class FlappyBird:
                     self.display,
                     WHITE_COLOR,
                     pygame.Rect(
-                        lower_pipe["x"], lower_pipe["y"], self.pipe_width, self.pipe_height
+                        lower_pipe["x"],
+                        lower_pipe["y"],
+                        self.pipe_width,
+                        self.pipe_height,
                     ),
                 )
 
@@ -185,7 +198,10 @@ class FlappyBird:
         return [{"x": pipe_x, "y": upper_pipe_y}, {"x": pipe_x, "y": lower_pipe_y}]
 
     def collision(self, player_x, player_y, upper_pipes, lower_pipes):
-        if player_y >= self.display_height - self.player_radius or player_y - self.player_radius <= 0:
+        if (
+            player_y >= self.display_height - self.player_radius
+            or player_y - self.player_radius <= 0
+        ):
             return True
 
         for pipe in upper_pipes:
