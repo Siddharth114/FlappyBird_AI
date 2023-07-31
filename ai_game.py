@@ -69,7 +69,7 @@ class FlappyBirdAI:
 
     def play_step(self, action):
         self.frame_iteration += 1
-        reward = 1
+        reward = 0
         if action==True:
             if self.player_y > 0:
                     self.player_velocity_y = self.player_flap_velocity
@@ -78,7 +78,7 @@ class FlappyBirdAI:
         self.game_over = self.collision()
 
         if self.game_over:
-            reward = -100
+            reward = -1000
             return reward, self.game_over, self.score
 
         player_mid_pos = self.player_x + self.player_radius // 2

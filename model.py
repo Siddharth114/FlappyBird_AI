@@ -37,9 +37,6 @@ class QTrainer:
         next_state = torch.Tensor(next_state)
         action = torch.Tensor([action])
         reward = torch.Tensor([reward])
-
-        print(state, next_state, action, reward, done, sep='\n')
-
         if len(state.shape) == 1:
             state = torch.unsqueeze(state, 0)
             next_state = torch.unsqueeze(next_state, 0)
@@ -56,7 +53,6 @@ class QTrainer:
             if not done[index]:
                 Q_new = reward[index] + self.gamma * torch.max(self.model(next_state[index]))
 
-            print(action[index])
             target[index] = Q_new
 
         self.optimiser.zero_grad()
