@@ -43,6 +43,8 @@ class FlappyBirdAI:
 
         self.new_pipe_1 = self.get_pipe()
         self.new_pipe_2 = self.get_pipe()
+        self.new_pipe_3 = self.get_pipe()
+
 
         self.pipe_velocity_x = -5
         self.player_velocity_y = -9
@@ -64,6 +66,15 @@ class FlappyBirdAI:
         self.lower_pipes.append(
             {"x": self.lower_pipes[-1]["x"] + 200, "y": self.new_pipe_2[1]["y"]}
         )
+
+        self.upper_pipes.append(
+            {"x": self.upper_pipes[-1]["x"] + 200, "y": self.new_pipe_3[0]["y"]}
+        )
+
+        self.lower_pipes.append(
+            {"x": self.lower_pipes[-1]["x"] + 200, "y": self.new_pipe_3[1]["y"]}
+        )
+
 
         for upper_pipe, lower_pipe in zip(self.upper_pipes, self.lower_pipes):
             if upper_pipe['x'] > self.player_x + self.player_radius:
@@ -124,7 +135,7 @@ class FlappyBirdAI:
             lower_pipe["x"] += self.pipe_velocity_x
 
         if self.upper_pipes[0]["x"] < self.player_radius and len(self.upcoming_pipes) <= 10:
-            new_pipe = self.get_pipe(upper_pipes=self.upper_pipes)
+            new_pipe = self.get_pipe(repeat=True)
             self.upper_pipes.append(new_pipe[0])
             self.lower_pipes.append(new_pipe[1])
 
