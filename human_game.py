@@ -57,9 +57,6 @@ class FlappyBird:
                     pygame.display.update()
                     self.clock.tick(FPS)
 
-    def play_step(self, event):
-        return event.type == KEYDOWN and event.key == K_SPACE
-
     def main_game(self):
         self.score = 0
         self.player_x = int(self.display_width / 5)
@@ -100,8 +97,7 @@ class FlappyBird:
                 ):
                     pygame.quit()
                     sys.exit()
-                self.is_space = self.play_step(event)
-                if self.is_space:
+                if event.type == KEYDOWN and event.key == K_SPACE:
                     if self.player_y > 0:
                         self.player_velocity_y = self.player_flap_velocity
                         self.player_flapped = True

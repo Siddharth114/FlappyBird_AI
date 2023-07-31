@@ -66,29 +66,9 @@ class FlappyBirdAI:
 
 
         self.update_ui()
-                 
-        
-        while True:
-            for event in pygame.event.get():
-                if event.type == QUIT or (
-                    event.type == KEYDOWN and event.key == K_ESCAPE
-                ):
-                    pygame.quit()
-                    sys.exit()
-                elif event.type == KEYDOWN and event.key == K_SPACE:
-                    self.main_game()
-                else:
-                    self.display.fill(BLACK_COLOR)
-                    pygame.draw.circle(
-                        self.display,
-                        WHITE_COLOR,
-                        (self.player_x, self.player_y),
-                        self.player_radius,
-                    )
-                    pygame.display.update()
-                    self.clock.tick(FPS)  
 
     def play_step(self, action):
+        self.frame_iteration += 1
         reward = 0
         if action==True:
             if self.player_y > 0:
@@ -139,6 +119,7 @@ class FlappyBirdAI:
             self.upper_pipes.pop(0)
             self.lower_pipes.pop(0)
         self.update_ui()
+        return reward, self.game_over, self.score
 
     def update_ui(self):
         self.display.fill(BLACK_COLOR)
