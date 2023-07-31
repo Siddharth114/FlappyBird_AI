@@ -8,12 +8,12 @@ class Linear_QNet(nn.Module):
     def __init__(self, input_size, hidden_size, output_size) -> None:
         super().__init__()
         self.linear1 = nn.Linear(input_size, hidden_size)
-        self.linear2 = nn.Sigmoid(hidden_size, output_size)
+        self.linear2 = nn.Linear(hidden_size, output_size)
 
     def forward(self, x):
         x = F.relu(self.linear1(x))
         x = self.linear2(x)
-        return x
+        return torch.sigmoid(x)
     
     def save(self, file_name='model.pth'):
         model_folder_path = './model'
@@ -33,10 +33,12 @@ class QTrainer:
         self.criterion = nn.MSELoss()
 
     def train_step(self, state, action, reward, next_state, done):
-        state=torch.Tensor(state, dtype = torch.float)
-        next_state = torch.Tensor(next_state, dtype = torch.float)
-        action = torch.Tensor(action, dtype=torch.long)
-        reward = torch.Tensor(reward, dtype = torch.float)
+        state=torch.Tensor(state)
+        next_state = torch.Tensor(next_state)
+        action = torch.Tensor([action])
+        reward = torch.Tensor([reward])
+
+        print(state, next_state, action, reward, done, sep='\n')
 
         if len(state.shape) == 1:
             state = torch.unsqueeze(state, 0)
@@ -54,7 +56,8 @@ class QTrainer:
             if not done[index]:
                 Q_new = reward[index] + self.gamma * torch.max(self.model(next_state[index]))
 
-            target[index][round(action)] = Q_new
+            print(action[index])
+            target[index] = Q_new
 
         self.optimiser.zero_grad()
         loss = self.criterion(target, pred)

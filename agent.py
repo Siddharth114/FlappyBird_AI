@@ -16,7 +16,7 @@ class Agent:
         self.epsilon = 0
         self.gamma = 0.9
         self.memory = deque(maxlen=MAX_MEMORY)
-        self.model = Linear_QNet(6, 64, 1)
+        self.model = Linear_QNet(10, 64, 1)
         self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
 
 
@@ -26,13 +26,17 @@ class Agent:
             game.player_x,
             game.player_y,
             # upcoming upper pipes with coordinates
-            game.upper_pipes[0],
-            game.upper_pipes[1],
+            game.upper_pipes[0]['x'],
+            game.upper_pipes[0]['y'],
+            game.upper_pipes[1]['x'],
+            game.upper_pipes[1]['y'],
             # upcoming lower pipes with coordinates
-            game.lower_pipes[0],
-            game.lower_pipes[1]
+            game.lower_pipes[0]['x'],
+            game.lower_pipes[0]['y'],
+            game.lower_pipes[1]['x'],
+            game.lower_pipes[1]['y']
         ]
-        return np.array(state)
+        return state
 
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
@@ -44,8 +48,10 @@ class Agent:
         else:
             mini_sample = self.memory
         
-        states, actions, rewards, next_states, dones = zip(*mini_sample)
-        self.trainer.train_step(states, actions, rewards, next_states, dones)
+        # states, actions, rewards, next_states, dones = zip(*mini_sample)
+        # self.trainer.train_step(states, actions, rewards, next_states, dones)
+        for state, action, reward, next_state, done in mini_sample:
+            self.trainer.train_step(state, action, reward, next_state, done)
 
 
     def train_short_memory(self, state, action, reward, next_state, done):
@@ -62,7 +68,8 @@ class Agent:
         else:
             state0 = torch.tensor(state, dtype=torch.float)
             prediction = self.model(state0)
-            move = round(prediction)
+
+            move = round(prediction.item())
             final_move = move%2
 
         return final_move
@@ -80,7 +87,7 @@ def train():
 
         final_move = agent.get_action(state_old)
 
-        reward, done, score = game.play_step(action = final_move)
+        reward, done, score = game.play_step(action = bool(final_move))
 
 
         state_new = agent.get_state(game)
