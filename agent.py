@@ -8,7 +8,7 @@ from helper import plot
 
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
-LR = 0.001
+LR = 0.05
 
 class Agent:
     def __init__(self):
@@ -16,7 +16,7 @@ class Agent:
         self.epsilon = 0
         self.gamma = 0.9
         self.memory = deque(maxlen=MAX_MEMORY)
-        self.model = Linear_QNet(9, 100, 1)
+        self.model = Linear_QNet(9, 256, 1)
         self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
 
 
@@ -104,8 +104,6 @@ def train():
             if score > record:
                 record = score
                 agent.model.save()
-
-            print('Game=', agent.n_games, 'Score=', score, 'Record=', record)
 
             plot_scores.append(score)
             total_score += score

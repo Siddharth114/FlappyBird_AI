@@ -112,7 +112,7 @@ class FlappyBirdAI:
             pipe_mid_pos = pipe["x"] + self.pipe_width / 2
             if pipe_mid_pos <= player_mid_pos < pipe_mid_pos + 4:
                 self.score += 1
-                reward += 10
+                # reward += 10
 
         if (
             self.player_velocity_y < self.player_max_velocity_y
