@@ -102,6 +102,13 @@ class FlappyBird:
                         self.player_velocity_y = self.player_flap_velocity
                         self.player_flapped = True
 
+            self.upcoming_pipes = []
+
+            for upper_pipe, lower_pipe in zip(self.upper_pipes, self.lower_pipes):
+                if upper_pipe['x'] >= self.player_x:
+                    self.upcoming_pipes.append(upper_pipe)
+                    self.upcoming_pipes.append(lower_pipe)
+
             self.game_over = self.collision(
                 self.player_x, self.player_y, self.upper_pipes, self.lower_pipes
             )
@@ -134,7 +141,8 @@ class FlappyBird:
                 upper_pipe["x"] += self.pipe_velocity_x
                 lower_pipe["x"] += self.pipe_velocity_x
 
-            if self.upper_pipes[0]["x"] == self.display_width // 8:
+            
+            if self.upper_pipes[0]["x"] < self.player_radius and len(self.upcoming_pipes) <= 10:
                 new_pipe = self.get_pipe(upper_pipes=self.upper_pipes)
                 self.upper_pipes.append(new_pipe[0])
                 self.lower_pipes.append(new_pipe[1])
@@ -142,6 +150,8 @@ class FlappyBird:
             if self.upper_pipes[0]["x"] < -self.pipe_width:
                 self.upper_pipes.pop(0)
                 self.lower_pipes.pop(0)
+
+            
 
             self.display.fill(BLACK_COLOR)
             for upper_pipe, lower_pipe in zip(self.upper_pipes, self.lower_pipes):

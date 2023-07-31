@@ -8,7 +8,7 @@ pygame.init()
 pygame.font.init()
 font = pygame.font.SysFont("Arial", 30)
 
-FPS = 32
+FPS = 60
 SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 600
 PIPE_WIDTH = 20
@@ -32,6 +32,7 @@ class FlappyBirdAI:
         self.reset()
 
     def reset(self):
+        self.upcoming_pipes = []
         self.player_x = int(self.display_width / 5)
         self.player_y = int(self.display_height - self.player_radius) / 2
         self.frame_iteration = 0
@@ -64,12 +65,26 @@ class FlappyBirdAI:
             {"x": self.lower_pipes[-1]["x"] + 200, "y": self.new_pipe_2[1]["y"]}
         )
 
+        for upper_pipe, lower_pipe in zip(self.upper_pipes, self.lower_pipes):
+            if upper_pipe['x'] > self.player_x + self.player_radius:
+                self.upcoming_pipes.append(upper_pipe)
+                self.upcoming_pipes.append(lower_pipe)
+
+
 
         self.update_ui()
 
     def play_step(self, action):
+
+        self.upcoming_pipes = []
+
+        for upper_pipe, lower_pipe in zip(self.upper_pipes, self.lower_pipes):
+            if upper_pipe['x'] >= self.player_x:
+                self.upcoming_pipes.append(upper_pipe)
+                self.upcoming_pipes.append(lower_pipe)
+
         self.frame_iteration += 1
-        reward = 0
+        reward = self.frame_iteration
         if action==True:
             if self.player_y > 0:
                     self.player_velocity_y = self.player_flap_velocity
@@ -78,7 +93,7 @@ class FlappyBirdAI:
         self.game_over = self.collision()
 
         if self.game_over:
-            reward = -1000
+            reward += -1000
             return reward, self.game_over, self.score
 
         player_mid_pos = self.player_x + self.player_radius // 2
@@ -108,8 +123,8 @@ class FlappyBirdAI:
             upper_pipe["x"] += self.pipe_velocity_x
             lower_pipe["x"] += self.pipe_velocity_x
 
-        if self.upper_pipes[0]["x"] == self.display_width // 8:
-            new_pipe = self.get_pipe(repeat=True)
+        if self.upper_pipes[0]["x"] < self.player_radius and len(self.upcoming_pipes) <= 10:
+            new_pipe = self.get_pipe(upper_pipes=self.upper_pipes)
             self.upper_pipes.append(new_pipe[0])
             self.lower_pipes.append(new_pipe[1])
 
