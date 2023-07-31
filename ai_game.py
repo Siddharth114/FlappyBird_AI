@@ -95,7 +95,7 @@ class FlappyBirdAI:
                 self.upcoming_pipes.append(lower_pipe)
 
         self.frame_iteration += 1
-        reward = self.frame_iteration
+        reward = 0
         if action==True:
             if self.player_y > 0:
                     self.player_velocity_y = self.player_flap_velocity
@@ -143,6 +143,7 @@ class FlappyBirdAI:
             self.upper_pipes.pop(0)
             self.lower_pipes.pop(0)
         self.update_ui()
+        reward += self.frame_iteration
         return reward, self.game_over, self.score
 
     def update_ui(self):

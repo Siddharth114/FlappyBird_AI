@@ -16,7 +16,7 @@ class Agent:
         self.epsilon = 0
         self.gamma = 0.9
         self.memory = deque(maxlen=MAX_MEMORY)
-        self.model = Linear_QNet(10, 100, 1)
+        self.model = Linear_QNet(9, 100, 1)
         self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
 
 
@@ -25,15 +25,17 @@ class Agent:
             # player coordinates
             game.player_x,
             game.player_y,
-            # upcoming pipes with coordinates
+            # upcoming pipes with y coordinates
             game.upcoming_pipes[0]['x'],
             game.upcoming_pipes[0]['y'] + game.pipe_height,
             game.upcoming_pipes[1]['x'],
             game.upcoming_pipes[1]['y'],
-            game.upcoming_pipes[2]['x'],
-            game.upcoming_pipes[2]['y']+ game.pipe_height,
-            game.upcoming_pipes[3]['x'],
-            game.upcoming_pipes[3]['y']
+            #distance of player y coordinates and upcoming pipe y coordinates
+            game.player_y - game.upcoming_pipes[0]['y'] + game.pipe_height,
+            game.player_y - game.upcoming_pipes[1]['y'],
+            #distance to next pipe
+            game.player_x - game.upcoming_pipes[0]['x']
+
         ]
         return state
 
