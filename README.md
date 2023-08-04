@@ -22,3 +22,7 @@ The AI agent's learning process is driven by a reward system. I designed the rew
 
 ## Project Objective
 The main objective of this project was not to build the best AI for playing Flappy Bird, as that has been done before. Instead, I focused on visualizing how the AI evolves and improves its gameplay as it learns and relearns from its experiences. The learning process showcases the power of reinforcement learning and the potential of neural networks in teaching AI agents to excel at complex tasks.
+
+
+https://github.com/Siddharth114/FlappyBird_AI/assets/90757474/18db1d6f-c2c5-4741-b8ae-d9d6d56f7945
+
