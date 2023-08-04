@@ -5,6 +5,8 @@ This is a Flappy Bird AI project. In this project, I have created a basic clone 
 ## How to Play the Game
 To play the game manually, simply run the Python script and press the space bar to make the bird flap and avoid the pipes. The objective is to keep the bird alive for as long as possible and score points by passing through the gaps between the pipes.
 
+![Screenshot 2023-08-04 at 7 55 38 AM](https://github.com/Siddharth114/FlappyBird_AI/assets/90757474/835f5752-a790-437a-82a8-837ec5f31116)
+
 ## AI Controlled Game
 In addition to the manual gameplay, I have incorporated an AI-controlled game where an agent learns to play Flappy Bird through reinforcement learning. The AI agent observes the current state of the game and takes actions (flapping or not flapping) to maximize its cumulative reward over time. By using reinforcement learning, the agent learns from its actions and iteratively improves its gameplay strategy.
 
