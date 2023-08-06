@@ -3,6 +3,7 @@ from IPython import display
 
 plt.ion()
 
+# plotting training metrics
 def plot(scores, mean_scores):
     display.clear_output(wait=True)
     display.display(plt.gcf())

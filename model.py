@@ -4,6 +4,7 @@ import torch.optim as optim
 import torch.nn.functional as F
 import os
 
+# NN architecture
 class Linear_QNet(nn.Module):
     def __init__(self, input_size, hidden_size, output_size) -> None:
         super().__init__()
@@ -32,6 +33,7 @@ class QTrainer:
         self.optimiser = optim.Adam(model.parameters(), lr=self.lr)
         self.criterion = nn.MSELoss()
 
+    # calculation of bellman equation according to optimal policy
     def train_step(self, state, action, reward, next_state, done):
         state=torch.Tensor(state)
         next_state = torch.Tensor(next_state)

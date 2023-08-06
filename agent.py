@@ -6,6 +6,7 @@ from collections import deque
 from model import Linear_QNet, QTrainer
 from helper import plot
 
+# global variables
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
 LR = 0.05
@@ -72,6 +73,7 @@ class Agent:
 
 
 def train():
+    # iteratively calls the game step function and trains memory as applicable
     plot_scores = []
     plot_mean_scores = []
     total_score = 0
