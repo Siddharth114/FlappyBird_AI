@@ -74,6 +74,7 @@ class Agent:
 
 def train():
     # iteratively calls the game step function and trains memory as applicable
+    move_history = []
     plot_scores = []
     plot_mean_scores = []
     total_score = 0
@@ -85,6 +86,14 @@ def train():
 
         final_move = agent.get_action(state_old)
 
+        move_history.append(final_move)
+
+        #handling exploding gradients
+        # if sum(move_history[-20:]) >= 10:
+        #     final_move = 0
+        # if sum(move_history[-20:]) <= 2:
+        #     final_move = 1
+
         reward, done, score = game.play_step(action = bool(final_move))
 
         state_new = agent.get_state(game)
@@ -94,6 +103,7 @@ def train():
         agent.remember(state_old, final_move, reward, state_new, done)
 
         if done:
+            move_history=[]
             game.reset()
             agent.n_games +=1 
             agent.train_long_memory()

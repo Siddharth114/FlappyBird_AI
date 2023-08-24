@@ -8,7 +8,7 @@ pygame.init()
 pygame.font.init()
 font = pygame.font.SysFont("Arial", 30)
 
-FPS = 120
+FPS = 100
 SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 600
 PIPE_WIDTH = 20
@@ -83,7 +83,7 @@ class FlappyBirdAI:
 
 
 
-        self.update_ui()
+        self.update_ui(action=0)
 
     def play_step(self, action):
 
@@ -95,11 +95,11 @@ class FlappyBirdAI:
                 self.upcoming_pipes.append(lower_pipe)
 
         self.frame_iteration += 1
-        reward = min(self.frame_iteration - 1000, 0)
+        reward = 0
         if action==True:
             if self.player_y > 0:
-                    self.player_velocity_y = self.player_flap_velocity
-                    self.player_flapped = True
+                self.player_velocity_y = self.player_flap_velocity
+                self.player_flapped = True
         
         self.game_over = self.collision()
 
@@ -142,11 +142,11 @@ class FlappyBirdAI:
         if self.upper_pipes[0]["x"] < -self.pipe_width:
             self.upper_pipes.pop(0)
             self.lower_pipes.pop(0)
-        self.update_ui()
+        self.update_ui(action)
         reward += self.frame_iteration
         return reward, self.game_over, self.score
 
-    def update_ui(self):
+    def update_ui(self, action):
         self.display.fill(BLACK_COLOR)
         pygame.draw.circle(
                         self.display,
@@ -176,7 +176,7 @@ class FlappyBirdAI:
                         self.pipe_height,
                     ),
                 )
-        score_text = str(self.score)
+        score_text = f"{self.score}, action:{action}"
         text_width, text_height = font.size(str(score_text))
 
         text_x = (self.display_width - text_width) // 2
