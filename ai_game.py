@@ -104,7 +104,7 @@ class FlappyBirdAI:
         self.game_over = self.collision()
 
         if self.game_over:
-            reward += -1.5*self.frame_iteration
+            reward += -.8*self.frame_iteration
             return reward, self.game_over, self.score
         else:
             reward += 1

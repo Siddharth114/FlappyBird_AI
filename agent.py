@@ -92,12 +92,6 @@ def train():
         elif game.player_y <= 0.2*game.display_height:
             final_move=False
 
-        #handling exploding gradients
-        # if sum(move_history) > 0.6 * len(move_history):
-        #     final_move=False
-        # elif sum(move_history) < 0.4 * len(move_history):
-        #     final_move=True
-
         reward, done, score = game.play_step(action = bool(final_move))
 
         state_new = agent.get_state(game)
