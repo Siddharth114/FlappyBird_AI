@@ -17,7 +17,7 @@ class Agent:
         self.epsilon = 0
         self.gamma = 0.9
         self.memory = deque(maxlen=MAX_MEMORY)
-        self.model = Linear_QNet(5, 256, 1)
+        self.model = Linear_QNet(4, 256, 1)
         self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
 
 
@@ -26,7 +26,6 @@ class Agent:
             # player coordinates
             game.player_y,
             # upcoming pipes with y coordinates
-            game.upcoming_pipes[0]['x'],
             game.upcoming_pipes[0]['y'] + game.pipe_height,
             game.upcoming_pipes[1]['y'],
             #distance to next pipe
@@ -88,11 +87,16 @@ def train():
 
         move_history.append(final_move)
 
+        if game.player_y >= 0.8*game.display_height:
+            final_move = True
+        elif game.player_y <= 0.2*game.display_height:
+            final_move=False
+
         #handling exploding gradients
-        # if sum(move_history[-20:]) >= 10:
-        #     final_move = 0
-        # if sum(move_history[-20:]) <= 2:
-        #     final_move = 1
+        # if sum(move_history) > 0.6 * len(move_history):
+        #     final_move=False
+        # elif sum(move_history) < 0.4 * len(move_history):
+        #     final_move=True
 
         reward, done, score = game.play_step(action = bool(final_move))
 

@@ -104,15 +104,17 @@ class FlappyBirdAI:
         self.game_over = self.collision()
 
         if self.game_over:
-            reward += -1000
+            reward += -1.5*self.frame_iteration
             return reward, self.game_over, self.score
+        else:
+            reward += 1
 
         player_mid_pos = self.player_x + self.player_radius // 2
         for pipe in self.upper_pipes:
             pipe_mid_pos = pipe["x"] + self.pipe_width / 2
             if pipe_mid_pos <= player_mid_pos < pipe_mid_pos + 4:
                 self.score += 1
-                # reward += 10
+                reward += 10
 
         if (
             self.player_velocity_y < self.player_max_velocity_y
@@ -176,7 +178,7 @@ class FlappyBirdAI:
                         self.pipe_height,
                     ),
                 )
-        score_text = f"{self.score}, action:{action}"
+        score_text = f"Score: {self.score}"
         text_width, text_height = font.size(str(score_text))
 
         text_x = (self.display_width - text_width) // 2
