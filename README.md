@@ -20,6 +20,14 @@ The AI agent's learning process is driven by a reward system. I designed the rew
 * **Staying Alive**: Initially, the agent receives a negative reward for each frame that it stays alive. This negative reward diminishes over time, motivating the agent to find a more optimal strategy.
 * **Scoring Points**: The agent receives a reward of 0 for staying alive without scoring points, and an additional reward of 0 for scoring a point by passing through a gap between the pipes. If a reward were to be given for scoring a point, after a certain point in the game, the AI would be rewarded with a net positive reward.
 
+## Model Training and Performance:
+
+![FlappyBirdTrainingChart](https://github.com/Siddharth114/FlappyBird_AI/assets/90757474/61a20b13-7059-42f7-8b36-d847e4cbb8e6)
+* The performance of the model starts out very slowly with scores of 1/2 which are likely attributed to luck
+* But after ~400 iterations, the model starts learning and shows reasonable consistency
+
+
+
 ## Limitations and Future Work
 Despite the promising progress of the AI agent, there are some limitations and areas for future improvement:
 
