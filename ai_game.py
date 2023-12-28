@@ -8,7 +8,7 @@ pygame.init()
 pygame.font.init()
 font = pygame.font.SysFont("Arial", 30)
 
-FPS = 150
+FPS = 200
 SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 600
 PIPE_WIDTH = 20
@@ -83,7 +83,7 @@ class FlappyBirdAI:
 
 
 
-        self.update_ui(action=0)
+        # self.update_ui(action=0)
 
     def play_step(self, action):
 

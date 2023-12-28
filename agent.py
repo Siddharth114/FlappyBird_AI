@@ -80,40 +80,43 @@ def train():
     record = 0
     agent = Agent()
     game = FlappyBirdAI()
-    while True:
-        state_old = agent.get_state(game)
+    try:
+        while True:
+            state_old = agent.get_state(game)
 
-        final_move = agent.get_action(state_old)
+            final_move = agent.get_action(state_old)
 
-        move_history.append(final_move)
+            move_history.append(final_move)
 
-        if game.player_y >= 0.8*game.display_height:
-            final_move = True
-        elif game.player_y <= 0.2*game.display_height:
-            final_move=False
+            if game.player_y >= 0.8*game.display_height:
+                final_move = True
+            elif game.player_y <= 0.2*game.display_height:
+                final_move=False
 
-        reward, done, score = game.play_step(action = bool(final_move))
+            reward, done, score = game.play_step(action = bool(final_move))
 
-        state_new = agent.get_state(game)
+            state_new = agent.get_state(game)
 
-        agent.train_short_memory(state_old, final_move, reward, state_new, done)
+            agent.train_short_memory(state_old, final_move, reward, state_new, done)
 
-        agent.remember(state_old, final_move, reward, state_new, done)
+            agent.remember(state_old, final_move, reward, state_new, done)
 
-        if done:
-            move_history=[]
-            game.reset()
-            agent.n_games +=1 
-            agent.train_long_memory()
-            if score > record:
-                record = score
-                agent.model.save()
+            if done:
+                move_history=[]
+                game.reset()
+                agent.n_games +=1 
+                agent.train_long_memory()
+                if score > record:
+                    record = score
+                    agent.model.save()
 
-            plot_scores.append(score)
-            total_score += score
-            mean_scores = total_score/agent.n_games
-            plot_mean_scores.append(mean_scores)
-            plot(plot_scores, plot_mean_scores)
+                plot_scores.append(score)
+                total_score += score
+                mean_scores = total_score/agent.n_games
+                plot_mean_scores.append(mean_scores)
+                plot(plot_scores, plot_mean_scores, False)
+    except KeyboardInterrupt:
+        plot(plot_scores, plot_mean_scores, True)
 
 
 if __name__ == '__main__':
