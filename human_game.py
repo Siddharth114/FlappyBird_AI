@@ -39,18 +39,22 @@ class FlappyBird:
 
     # reset function after the player dies
     def reset(self):
+        # initial player position
         self.player_x = int(self.display_width / 5)
         self.player_y = int(self.display_height - self.player_radius) / 2
         while True:
             # check for user events
             for event in pygame.event.get():
+                # if the user presses the escape key or quits the program, the loop exits
                 if event.type == QUIT or (
                     event.type == KEYDOWN and event.key == K_ESCAPE
                 ):
                     pygame.quit()
                     sys.exit()
+                # if the user presses the space bar, the game starts
                 elif event.type == KEYDOWN and event.key == K_SPACE:
                     self.main_game()
+                # keep drawing the initial position until the user makes a choice
                 else:
                     self.display.fill(BLACK_COLOR)
                     pygame.draw.circle(
@@ -72,6 +76,7 @@ class FlappyBird:
         self.new_pipe_1 = self.get_pipe()
         self.new_pipe_2 = self.get_pipe()
 
+        # initial velocities when the user presses the space bar for the first time
         self.pipe_velocity_x = -5
         self.player_velocity_y = -9
         self.player_max_velocity_y = 10
@@ -80,7 +85,7 @@ class FlappyBird:
         self.player_flapped = False
 
         self.game_over = False
-        #add pipes to list of pipes with intervals of 200 between each other
+        #add pipes to list of pipes with intervals of 200 pixels between each other
         self.upper_pipes = [
             {"x": self.display_width + 200, "y": self.new_pipe_1[0]["y"]}
         ]
@@ -105,6 +110,7 @@ class FlappyBird:
                 ):
                     pygame.quit()
                     sys.exit()
+                # if the user presses the space bar, update variables as required
                 if event.type == KEYDOWN and event.key == K_SPACE:
                     if self.player_y > 0:
                         self.player_velocity_y = self.player_flap_velocity

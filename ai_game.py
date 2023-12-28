@@ -8,7 +8,7 @@ pygame.init()
 pygame.font.init()
 font = pygame.font.SysFont("Arial", 30)
 
-FPS = 100
+FPS = 150
 SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 600
 PIPE_WIDTH = 20
@@ -144,7 +144,7 @@ class FlappyBirdAI:
         if self.upper_pipes[0]["x"] < -self.pipe_width:
             self.upper_pipes.pop(0)
             self.lower_pipes.pop(0)
-        self.update_ui(action)
+        # self.update_ui(action)
         reward += self.frame_iteration
         return reward, self.game_over, self.score
 
