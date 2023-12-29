@@ -17,7 +17,7 @@ class Agent:
         self.epsilon = 0
         self.gamma = 0.9
         self.memory = deque(maxlen=MAX_MEMORY)
-        self.model = Linear_QNet(4, 256, 1)
+        self.model = Linear_QNet(5, 256, 1)
         self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
 
 
@@ -29,7 +29,9 @@ class Agent:
             game.upcoming_pipes[0]['y'] + game.pipe_height,
             game.upcoming_pipes[1]['y'],
             #distance to next pipe
-            game.player_x - game.upcoming_pipes[0]['x']
+            game.upcoming_pipes[0]['x'] - game.player_x,
+            # vertical velocity
+            game.player_velocity_y
 
         ]
         return state
@@ -64,7 +66,6 @@ class Agent:
         else:
             state0 = torch.tensor(state, dtype=torch.float)
             prediction = self.model(state0)
-
             move = round(prediction.item())
             final_move = move%2
 
