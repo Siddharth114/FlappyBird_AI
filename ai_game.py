@@ -147,7 +147,7 @@ class FlappyBirdAI:
             self.upper_pipes.pop(0)
             self.lower_pipes.pop(0)
         # self.update_ui(action)
-        reward += self.frame_iteration
+        # reward += self.frame_iteration
         return reward, self.game_over, self.score
 
     def update_ui(self, action):

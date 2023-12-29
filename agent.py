@@ -80,6 +80,7 @@ def train():
     record = 0
     agent = Agent()
     game = FlappyBirdAI()
+    total_reward = 0
     try:
         while True:
             state_old = agent.get_state(game)
@@ -95,6 +96,8 @@ def train():
 
             reward, done, score = game.play_step(action = bool(final_move))
 
+            total_reward+=reward
+
             state_new = agent.get_state(game)
 
             agent.train_short_memory(state_old, final_move, reward, state_new, done)
@@ -102,6 +105,8 @@ def train():
             agent.remember(state_old, final_move, reward, state_new, done)
 
             if done:
+                print(total_reward)
+                total_reward = 0
                 move_history=[]
                 game.reset()
                 agent.n_games +=1 
