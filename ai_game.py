@@ -8,7 +8,7 @@ pygame.init()
 pygame.font.init()
 font = pygame.font.SysFont("Arial", 30)
 
-FPS = 1000 # how fast each game progresses
+FPS = 5000 # how fast each game progresses
 SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 600
 PIPE_WIDTH = 20
