@@ -3,6 +3,7 @@ from IPython import display
 import datetime
 
 plt.ion()
+plt.figure(figsize=(10, 6))
 
 # plotting training metrics
 def plot(scores, mean_scores, to_save):
@@ -21,7 +22,7 @@ def plot(scores, mean_scores, to_save):
     if to_save:
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         filename = f"training_results/training_run_{timestamp}.png"
-        plt.savefig(filename)
+        plt.savefig(filename, dpi=600)
         print(f"Chart saved as: {filename}")
     plt.show(block=False)
     plt.pause(.1)
