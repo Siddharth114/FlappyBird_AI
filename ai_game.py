@@ -8,7 +8,7 @@ pygame.init()
 pygame.font.init()
 font = pygame.font.SysFont("Arial", 30)
 
-FPS = 200
+FPS = 300 # how fast each game progresses
 SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 600
 PIPE_WIDTH = 20
@@ -26,8 +26,8 @@ class FlappyBirdAI:
         self.player_radius = PLAYER_RADIUS
         self.pipe_height = PIPE_HEIGHT
         self.pipe_width = PIPE_WIDTH
-        self.display = pygame.display.set_mode((self.display_width, self.display_height))
-        pygame.display.set_caption("Flappy Bird Clone")
+        # self.display = pygame.display.set_mode((self.display_width, self.display_height))
+        # pygame.display.set_caption("Flappy Bird Clone")
         self.clock = pygame.time.Clock()
         self.reset()
 
@@ -104,10 +104,12 @@ class FlappyBirdAI:
         self.game_over = self.collision()
 
         if self.game_over:
-            reward += -.8*self.frame_iteration
+            reward = -1000 # reward for dying
+            # reward += -.8*self.frame_iteration
             return reward, self.game_over, self.score
         else:
-            reward += 1
+            pass
+            # reward += 1 # reward for staying alive in a frame
 
         player_mid_pos = self.player_x + self.player_radius // 2
         for pipe in self.upper_pipes:
