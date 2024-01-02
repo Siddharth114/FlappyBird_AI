@@ -105,7 +105,6 @@ def train():
             agent.remember(state_old, final_move, reward, state_new, done)
 
             if done:
-                print(total_reward)
                 total_reward = 0
                 move_history=[]
                 game.reset()
