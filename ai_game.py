@@ -1,14 +1,13 @@
 import pygame
 from pygame.locals import *
 import random
-import sys
 import math
 
 pygame.init()
 pygame.font.init()
 font = pygame.font.SysFont("Arial", 30)
 
-FPS = 10000 # how fast each game progresses
+FPS = 20000 # how fast each game progresses
 SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 600
 PIPE_WIDTH = 20

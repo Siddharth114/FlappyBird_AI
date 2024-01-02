@@ -1,6 +1,5 @@
 import torch
 import random
-import numpy as np
 from ai_game import *
 from collections import deque
 from model import Linear_QNet, QTrainer
