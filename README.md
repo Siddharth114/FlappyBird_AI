@@ -17,7 +17,7 @@ To facilitate the AI agent's decision-making process, I built a neural network u
 The AI agent's learning process is driven by a reward system. I designed the reward system as follows:
 
 * **Death**: If the AI agent crashes into a pipe or goes out of bounds, it receives a penalty of -1000 to discourage such behavior.
-* **Staying Alive**: Initially, the agent receives a negative reward for each frame that it stays alive. This negative reward diminishes over time, motivating the agent to find a more optimal strategy.
+* **Staying Alive**: Initially, the agent receives a positive reward for each frame that it stays alive. This positive reward diminishes over time, motivating the agent to find a more optimal strategy.
 * **Scoring Points**: The agent receives a reward of 0 for staying alive without scoring points, and an additional reward of 0 for scoring a point by passing through a gap between the pipes. If a reward were to be given for scoring a point, after a certain point in the game, the AI would be rewarded with a net positive reward.
 
 ## Model Training and Performance:
