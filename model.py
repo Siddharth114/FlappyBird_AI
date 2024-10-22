@@ -6,17 +6,16 @@ import os
 
 # NN architecture
 class Linear_QNet(nn.Module):
-    def __init__(self, input_size, hidden_size, output_size) -> None:
+    def __init__(self, input_size, hidden_size, output_size=2):
         super().__init__()
         self.linear1 = nn.Linear(input_size, hidden_size)
-        self.linear2 = nn.Linear(hidden_size, hidden_size)  # Add a second hidden layer
-        self.linear3 = nn.Linear(hidden_size, output_size)
+        self.linear2 = nn.Linear(hidden_size, hidden_size)
+        self.linear3 = nn.Linear(hidden_size, output_size)  # This should take hidden_size input and give output_size output
 
     def forward(self, x):
-        x = F.relu(self.linear1(x))
-        x = F.relu(self.linear2(x))  # Apply ReLU to both hidden layers
-        x = self.linear3(x)
-        return torch.sigmoid(x)
+        x = F.relu(self.linear1(x))   # Input: (batch_size, input_size) -> Output: (batch_size, hidden_size)
+        x = F.relu(self.linear2(x))   # Input: (batch_size, hidden_size) -> Output: (batch_size, hidden_size)
+        return self.linear3(x)  
     
     def save(self, file_name='model.pth'):
         model_folder_path = './model'
@@ -32,15 +31,15 @@ class QTrainer:
         self.lr = lr
         self.gamma = gamma
         self.model = model
-        self.optimiser = optim.Adam(model.parameters(), lr=self.lr)
+        self.optimizer = optim.Adam(model.parameters(), lr=self.lr)
         self.criterion = nn.MSELoss()
 
-    # calculation of bellman equation according to optimal policy
     def train_step(self, state, action, reward, next_state, done):
-        state=torch.Tensor(state)
-        next_state = torch.Tensor(next_state)
-        action = torch.Tensor([action])
-        reward = torch.Tensor([reward])
+        state = torch.tensor(state, dtype=torch.float)
+        next_state = torch.tensor(next_state, dtype=torch.float)
+        action = torch.tensor(action, dtype=torch.long)  # Action is now one-hot
+        reward = torch.tensor(reward, dtype=torch.float)
+
         if len(state.shape) == 1:
             state = torch.unsqueeze(state, 0)
             next_state = torch.unsqueeze(next_state, 0)
@@ -48,19 +47,20 @@ class QTrainer:
             reward = torch.unsqueeze(reward, 0)
             done = (done, )
 
+        # Get predicted Q values with current state
         pred = self.model(state)
 
+        # Q_new = reward + gamma * max(next_predicted Q value)
         target = pred.clone()
+        for idx in range(len(done)):
+            Q_new = reward[idx]
+            if not done[idx]:
+                Q_new = reward[idx] + self.gamma * torch.max(self.model(next_state[idx]))
+            
+            # Update Q value for taken action
+            target[idx][torch.argmax(action[idx]).item()] = Q_new
 
-        for index in range(len(done)):
-            Q_new = reward[index]
-            if not done[index]:
-                Q_new = reward[index] + self.gamma * torch.max(self.model(next_state[index]))
-
-            target[index] = Q_new
-
-        self.optimiser.zero_grad()
+        self.optimizer.zero_grad()
         loss = self.criterion(target, pred)
         loss.backward()
-
-        self.optimiser.step()
+        self.optimizer.step()
