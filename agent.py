@@ -16,7 +16,7 @@ class Agent:
         self.epsilon = 0
         self.gamma = 0.9
         self.memory = deque(maxlen=MAX_MEMORY)
-        self.model = Linear_QNet(5, 256, 1)
+        self.model = Linear_QNet(input_size=5, hidden_size=256, output_size=2)  # Make sure these dimensions are correct
         self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
 
 
@@ -58,21 +58,24 @@ class Agent:
 
     def get_action(self, state):
         self.epsilon = 80 - self.n_games
-        final_move = False
-        if random.randint(0,200) < self.epsilon:
-            move = random.randint(0,1)
-            final_move = move%2
+        final_move = [0, 0]  # [don't flap, flap]
+        
+        if random.randint(0, 200) < self.epsilon:
+            move = random.randint(0, 1)
+            final_move[move] = 1
         else:
             state0 = torch.tensor(state, dtype=torch.float)
+            if len(state0.shape) == 1:  # Add this check to ensure proper dimensions
+                state0 = torch.unsqueeze(state0, 0)  # Add batch dimension
             prediction = self.model(state0)
-            move = round(prediction.item())
-            final_move = move%2
-
+            move = torch.argmax(prediction).item()
+            final_move[move] = 1
+        
         return final_move
 
 
+
 def train():
-    # iteratively calls the game step function and trains memory as applicable
     move_history = []
     plot_scores = []
     plot_mean_scores = []
@@ -86,29 +89,31 @@ def train():
             state_old = agent.get_state(game)
 
             final_move = agent.get_action(state_old)
-
-            move_history.append(final_move)
-
+            
+            # Convert one-hot action to boolean - index 1 represents "flap"
+            action = final_move[1] == 1  # This converts to boolean
+            
+            # Safety checks for staying in bounds (can keep or remove these)
             if game.player_y >= 0.8*game.display_height:
-                final_move = True
+                action = True
             elif game.player_y <= 0.2*game.display_height:
-                final_move=False
+                action = False
 
-            reward, done, score = game.play_step(action = bool(final_move))
+            reward, done, score = game.play_step(action=action)  # Pass the boolean action
 
-            total_reward+=reward
+            total_reward += reward
 
             state_new = agent.get_state(game)
 
+            # For training, pass the full final_move (one-hot encoded action)
             agent.train_short_memory(state_old, final_move, reward, state_new, done)
-
             agent.remember(state_old, final_move, reward, state_new, done)
 
             if done:
                 total_reward = 0
-                move_history=[]
+                move_history = []
                 game.reset()
-                agent.n_games +=1 
+                agent.n_games += 1 
                 agent.train_long_memory()
                 if score > record:
                     record = score
