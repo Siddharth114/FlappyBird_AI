@@ -1,43 +1,59 @@
-# Flappy Bird AI using Reinforcement Learning and Neural Networks
-## Introduction
-This is a Flappy Bird AI project. In this project, I have created a basic clone of the popular Flappy Bird game and implemented an AI agent using reinforcement learning to play the game. The AI agent is trained using a neural network built with PyTorch.
+# Flappy Bird AI — Deep Q-Learning, take two
 
-## How to Play the Game
-To play the game manually, simply run the Python script and press the space bar to make the bird flap and avoid the pipes. The objective is to keep the bird alive for as long as possible and score points by passing through the gaps between the pipes.
+A from-scratch Flappy Bird clone and an agent that learns to play it with deep Q-learning (PyTorch).
+**Watch it learn, or race it, in your browser:** https://portfolio-ahl.pages.dev/college/game-ais
 
-![Screenshot 2023-08-04 at 7 55 38 AM](https://github.com/Siddharth114/FlappyBird_AI/assets/90757474/835f5752-a790-437a-82a8-837ec5f31116)
+## The short version
+In 2023 I built this, saw the occasional lucky pipe, and wrote that it had started to learn.
+It hadn't — re-running that exact recipe on the same game (table below) shows it never got past luck.
+In 2026 I came back, found out why, and fixed it. Both versions are in this repo; the comparison below is measured on the same game, from one training run of each.
 
-## AI Controlled Game
-In addition to the manual gameplay, I have incorporated an AI-controlled game where an agent learns to play Flappy Bird through reinforcement learning. The AI agent observes the current state of the game and takes actions (flapping or not flapping) to maximize its cumulative reward over time. By using reinforcement learning, the agent learns from its actions and iteratively improves its gameplay strategy.
+![Training](training_results/2026-rework.png)
 
-## Neural Network Architecture
-To facilitate the AI agent's decision-making process, I built a neural network using PyTorch. The neural network takes the state of the game as input and predicts the best action to take. The state space consists of three variables: the player's position, the distance to the next pipe, and the vertical position of the opening of the pipe. These variables are fed into the neural network, which outputs the action (flap or not flap) that the AI agent should take in the current state.
+## Results
+The hand-written rule flaps whenever the bird sinks within 40px of the bottom of the next gap.
 
-## Reward System
-The AI agent's learning process is driven by a reward system. I designed the reward system as follows:
+| | Mean pipes | Best | Training games |
+|---|---|---|---|
+| 2023 recipe (re-run) | 0.15 | 2 | 500 |
+| Hand-written rule | 69.5 | 200 | — |
+| 2026 rework | 85.9 | 200 | 577 |
 
-* **Death**: If the AI agent crashes into a pipe or goes out of bounds, it receives a penalty of -1000 to discourage such behavior.
-* **Staying Alive**: Initially, the agent receives a positive reward for each frame that it stays alive. This positive reward diminishes over time, motivating the agent to find a more optimal strategy.
-* **Scoring Points**: The agent receives a reward of 0 for staying alive without scoring points, and an additional reward of 0 for scoring a point by passing through a gap between the pipes. If a reward were to be given for scoring a point, after a certain point in the game, the AI would be rewarded with a net positive reward.
+Evaluated greedily on 100 held-out pipe layouts (seeds 2000–2099), capped at 200 pipes. Checkpoints were
+selected on a separate 20 (seeds 1000–1019), so selection doesn't flatter these numbers.
 
-## Model Training and Performance:
+## What the agent sees
+Seven numbers per frame, scaled to roughly −1…1: distance from the bird to the top and bottom of the
+next gap and of the gap after it, horizontal distance to the next pipe, vertical speed, and height.
+Two actions: flap or don't. Seeing the gap after next made the biggest difference in my experiments — consecutive gaps can be
+350px apart with only 40 frames to get there.
 
-![FlappyBirdTrainingChart](https://github.com/Siddharth114/FlappyBird_AI/assets/90757474/61a20b13-7059-42f7-8b36-d847e4cbb8e6)
-* The performance of the model starts out very slowly with scores of 1/2 which are likely attributed to luck
-* But after ~400 iterations, the model starts learning and shows reasonable consistency
+## Why the 2023 version never learned
+These are the bugs I found reading the code back; I didn't ablate them one at a time.
 
+- **Raw pixel inputs** (values in the hundreds) with a learning rate of 0.05, which I think saturated the network —
+  the stuck-on-one-action collapse I blamed on exploding gradients.
+- **Rewards out of scale:** −1000 for dying, +10 for a pipe — and with γ = 0.9 a pipe 40 frames away
+  is worth 0.9⁴⁰ ≈ 1.5% of its value. The agent could barely see the thing it was meant to want.
+- **A safety override recorded the wrong action:** near the floor/ceiling the game took over,
+  but replay memory stored the move the agent *chose*, not the one that happened.
+- **Exploration switched off after 80 games.**
+- **The TD target wasn't detached,** so each update also pushed the target around.
+- **One-sample-at-a-time training** made every update noisy and slow.
 
+## What changed in 2026
+Normalised, bird-relative inputs that include the gap after next · rewards of +0.1/frame, +1/pipe,
+−1/crash · γ = 0.99 · Double DQN with a target network · Huber loss + gradient clipping (the fix the 2023
+README proposed) · mini-batches from a 100k replay buffer · no override — it keeps itself alive ·
+keep the best checkpoint by validation score, because DQN on this task oscillates — most of the run's later checkpoints fell apart again.
 
-## Limitations and Future Work
-Despite the promising progress of the AI agent, there are some limitations and areas for future improvement:
+## Run it
+    uv run pytest                                  # tests
+    uv run python train.py --steps 300000          # train (CPU, minutes)
+    uv run python baseline_2023.py                 # re-run the 2023 recipe
+    uv run python export_web.py                    # export to the portfolio
+    uv run python human_game.py                    # play it yourself
 
-* **Computing Power**: Due to limited facilities and resources, I was unable to let the model run for a large number of epochs, which would result in an optimally trained model that surpasses any form of human play. However, I observed that the model shows signs of improvement after approximately 100 epochs, indicating the potential for further enhancement with increased computing power.
-
-* **Exploding Gradients/Vanishing Gradients**: One challenge encountered during training is the issue of the model getting stuck in a loop of vanishing or exploding gradients, where it returns only one action (either jump or no jump) regardless of the state space. This phenomenon occurs intermittently and takes around 20 episodes to get the model back on track. To address this, I plan to explore techniques to circumvent this problem, such as implementing gradient clipping or adjusting the neural network architecture.
-
-## Project Objective
-The main objective of this project was not to build the best AI for playing Flappy Bird, as that has been done before. Instead, I focused on visualizing how the AI evolves and improves its gameplay as it learns and relearns from its experiences. The learning process showcases the power of reinforcement learning and the potential of neural networks in teaching AI agents to excel at complex tasks.
-
-
-https://github.com/Siddharth114/FlappyBird_AI/assets/90757474/18db1d6f-c2c5-4741-b8ae-d9d6d56f7945
-
+## Repo layout
+`flappy_env.py` headless game (source of truth; the browser port mirrors it) · `train.py` DQN ·
+`baseline_2023.py` the old recipe · `export_web.py` portfolio export · `legacy/` the original 2023 code and charts.
